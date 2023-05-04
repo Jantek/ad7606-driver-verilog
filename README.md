@@ -1,61 +1,58 @@
 # ad7606-driver-verilog
-
-AD7606端口
+AD7606 port
 =======
 AD7606_ctrl.v
 -------
-**外部信号**<br/>
-通过这些信号可以控制整个模块的采样开始<br/>
-`clk    ` :	整个模块的主时钟，推荐使用50M时钟，时钟再高某些信号的时序可能不满足芯片手册上的要求<br/>
-`rst_n  ` : 整个模块的复位信号，低电平复位<br/>
-`en	    ` :	控制AD7606的采样率，通过使能信号控制采样过程的开始达到控制AD7606的采样<br/>
-`start  ` :	开始采样信号，高电平时代表开始采样；此时如果en为高则开始采样；当该电平为低时，AD7606不会进入采样状态<br/>
+**External signals**</br>
+These signals can be used to control the sampling start of the entire module</br>
+`clk     `: the main clock of the entire module, it is recommended to use a 50M clock, and the timing of some signals may not meet the requirements of the chip manual if the clock is higher</br>
+`rst_n   `: the reset signal of the entire module, low-level complex Bit</br>
+`en      `: Control the sampling rate of AD7606, control the start of the sampling process through the enable signal to control the sampling of AD7606</br>
+`start   `: start sampling signal, high level means start sampling; at this time, if en is high, start sampling; when the level is low When the AD7606 will not enter the sampling state</br>
 
-**AD7606的控制信号**<br/>
-这些端口是直接连接AD7606，会根据外部信号产生相应的变化<br/>
-`busy	  ` :	AD7606的busy输出信号，当全通道（8 channel）开始采样之后该信号变高，采样结束该信号拉低<br/>
-`fdata  ` :	AD7606的指示信号，在采样结果输出阶段，该信号拉高表明输出的数据为一通道的数据<br/>
-`cvtData` : AD7606的并行数据输出端口<br/>
-`cs	    ` : AD7606的片选信号，低电平有效<br/>
-`rd	    ` :	AD7606的读信号，低电平有效<br/>
-`cvtX	  ` :	AD7606的通道采样信号，有cvtA，cvtB<br/>
-`range  ` :	AD7606模拟输入的电压范围选择，高电平为10V，低电平为5V<br/>
-`phy_rst` : AD7606的硬件复位信号，高电平有效<br/>
-`vio    ` : AD7606的IO口电压选择<br/>
+**AD7606 control signal**</br>
+These ports are directly connected to AD7606, and will produce corresponding changes according to external signals</br>
+`busy    `: AD7606’s busy output signal, when all channels (8 channels) start sampling, the signal becomes high, and the signal is pulled down after sampling</br>
+`fdata   `: AD7606’s Indication signal, in the sampling result output stage, the signal is pulled high to indicate that the output data is the data of one channel</br>
+`cvtData `: AD7606 parallel data output port</br>
+`cs      `: AD7606 chip select signal, low level active</br>
+`rd      `: AD7606 read signal, low level active</br>
+`cvtX    `: AD7606 channel sampling signal, cvtA, cvtB</br>
+`range   `: AD7606 analog input voltage range selection, high level is 10V, low level is 5V</br>
+`phy_rst `: AD7606 hardware reset signal, high level is valid</br>
+`vio     `: AD7606 IO port voltage selection</br>
 
-**AD7606的读取信号**<br/>
-读取这些数据可以更好的对AD7606控制<br/>
-`chx	   `:	从AD7606读取回来的通道数据，x有1-8<br/>
-`update  `: AD7606数据更新指示信号，为高代表数据已经更新<br/>
-`phy_busy`: AD7606忙碌状态信号，为高代表AD7606正在忙碌中<br/>
+**Read signal of AD7606**</br>
+Reading these data can better control AD7606</br>
+`chx     `: channel data read back from AD7606, x has 1-8</br>
+`update  `: AD7606 data update indication signal, high means that the data has been updated</br>
+`phy_busy`: AD7606 busy status signal, High means the AD7606 is busy</br>
 
-**常数定义**<br/>
-`RANGE_10V`: 控制`range  `，为1时代表模拟输入范围为10V，0代表模拟输入范围为5V<br/>
-`WAIT_CNT	`: 调试过程中曾用到，保留<br/>
-`T2				`: `cvtX	  `保持低电平的时间次数，芯片手册中`cvtX	  `推荐保持25ns，所以这里使用2（40ns）保证低电平的时间满足时序要求<br/>
+**Constant definition**</br>
+`RANGE_10V`: control range , when it is 1, it means that the analog input range is 10V, and when it is 0, it means that the analog input range is 5V:</br>
+`WAIT_CNT `: used in the debugging process, reserved</br>
+`T2       `: cvtX the number of times to keep the low level, the chip manual cvtX recommends to keep 25ns, so it is used here 2 (40ns) to ensure that the low level time meets the timing requirements</br>
 
 generate_en.v
-----------
-**外部信号**<br/>
-`clk		`: 整个模块的主时钟<br/>
-`rst_n	`: 整个模块的复位信号，低电平复位<br/>
+------
+**External signal**</br>
+clk : main clock of the whole module</br>
+rst_n : reset signal of the whole module, low level reset</br>
 
-**AD7606的输出信号**<br/>
-`en_o	  `: 模块的输出使能信号<br/>
+**The output signal of AD7606**</br>
+en_o : the output enable signal of the module</br>
 
-**常数定义**<br/>
-`INTERVAL_CNT`: 使能信号的周期数设置<br/>
+**Constant definition**</br>
+INTERVAL_CNT : the cycle number setting of the enable signal</br>
+AD7606Demo</br>
+ad_top.v</br>
 
-AD7606Demo
-==========
-ad_top.v
----------
-需要例化一个PLL锁相环并命名为pll，并且将三个verilog文件添加进工程，绑定好管脚即可编译通过。该Demo以200K的采样率采集信号并输出。<br/>
+It is necessary to instantiate a PLL phase-locked loop and name it pll, and add three verilog files to the project, bind the pins and then compile and pass. This Demo collects signals at a sampling rate of 200K and outputs them.</br>
 
-**使用的AD7606模块**<br/>
+Although the AD7606 module used may be different, the relevant port control and other operations should be similar, because they all use an AD7606 chip</br>
+
 ![AD7606](https://raw.githubusercontent.com/maxs-well/ad7606-driver-verilog/master/img/hardware.jpg)<br/>
-虽然可能模块不一样，但相关的端口控制等操作应该都是大同小异的，因为都是使用一个AD7606的芯片<br/>
 
-**环境**<br/>
-Quartus II 13.0<br/>
-Windows 7
+**Environment**</br>
+Quartus II 13.0</br>
+Windows 7</br>
